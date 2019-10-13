@@ -1,5 +1,6 @@
 package entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Item {
@@ -7,13 +8,13 @@ public class Item {
     private String name;
     private String brand;
     private List<String> color;
-    private double price;
+    private BigDecimal price;
     private String articleId;
 
     public Item() {
     }
 
-    public Item(String name, String brand, List<String> color, double price, String articleId) {
+    public Item(String name, String brand, List<String> color, BigDecimal price, String articleId) {
         this.name = name;
         this.brand = brand;
         this.color = color;
@@ -45,11 +46,11 @@ public class Item {
         this.color = color;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
