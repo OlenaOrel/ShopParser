@@ -12,12 +12,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemParser extends Thread {
+public class ItemPageParser extends Thread {
 
     private final String URL;
     private List<Item> itemList;
 
-    public ItemParser(String URL, List<Item> itemList) {
+    public ItemPageParser(String URL, List<Item> itemList) {
         this.URL = URL;
         this.itemList = itemList;
     }
@@ -32,6 +32,7 @@ public class ItemParser extends Thread {
             BigDecimal price = getItemPrice(document);
             String articleId = getItemArticleId(document);
             Item item = new Item(name, brand, color, price, articleId);
+            System.out.println(item.toString());
             itemList.add(item);
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,10 +52,13 @@ public class ItemParser extends Thread {
         Elements elements = document.getElementsByClass("PriceBoxExtended__StyledPriceBox-sc-1t8547r-0 iogkTg");
         if (!elements.isEmpty()) {
             String[] tmp = elements.first().text().split(" ");
-            String priceAsText = tmp[0].replace(",", ".");
-            if (priceAsText != null && !(priceAsText.equals(""))) {
-                double price = Double.parseDouble(priceAsText);
-                return new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
+            String priceAsText = null;
+            for (String s : tmp) {
+                if (s.matches("^[0-9]*[.,][0-9]+$") && priceAsText == null) {
+                    priceAsText = s.replace(",", ".");
+                    double price = Double.parseDouble(priceAsText);
+                    return new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
+                }
             }
         }
         return null;

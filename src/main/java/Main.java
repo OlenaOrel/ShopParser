@@ -1,5 +1,5 @@
 import entity.Item;
-import service.ItemParser;
+import service.NavigationPageParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,19 +8,31 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        String url = "https://www.aboutyou.de/p/only-sons/hose-mark-pant-gw-0209-4305913";
+        String url = "https://www.aboutyou.de/maenner/bekleidung?page=2&sort=topseller";
 
         List<Item> itemList = Collections.synchronizedList(new ArrayList<Item>());
+        List<Thread> threads = Collections.synchronizedList(new ArrayList<Thread>());
 
-        ItemParser itemParser = new ItemParser(url, itemList);
-        itemParser.start();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        NavigationPageParser parser = new NavigationPageParser(threads, itemList, url);
+        parser.start();
+        do {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (threadsStillWork(threads));
+
+    }
+
+    private static boolean threadsStillWork(List<Thread> threads) {
+        for (Thread thread : threads) {
+            if (thread.getState().equals(Thread.State.NEW) || thread.isAlive()) {
+                return true;
+            }
         }
-        System.out.println(itemList.get(0));
 
+        return false;
     }
 
 }
