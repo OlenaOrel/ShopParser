@@ -1,4 +1,4 @@
-import entity.Item;
+import dao.FileSystemItemDao;
 import service.NavigationPageParser;
 
 import java.util.ArrayList;
@@ -10,10 +10,11 @@ public class Main {
     public static void main(String[] args) {
         String url = "https://www.aboutyou.de/maenner/bekleidung?page=2&sort=topseller";
 
-        List<Item> itemList = Collections.synchronizedList(new ArrayList<Item>());
-        List<Thread> threads = Collections.synchronizedList(new ArrayList<Thread>());
+        List<String> jsonItemList = Collections.synchronizedList(new ArrayList<>());
+        List<Thread> threads = Collections.synchronizedList(new ArrayList<>());
 
-        NavigationPageParser parser = new NavigationPageParser(threads, itemList, url);
+        NavigationPageParser parser = new NavigationPageParser(threads, jsonItemList, url);
+        threads.add(parser);
         parser.start();
         do {
             try {
@@ -23,6 +24,10 @@ public class Main {
             }
         } while (threadsStillWork(threads));
 
+        FileSystemItemDao fileSystemItemDao = new FileSystemItemDao();
+        for (String item : jsonItemList) {
+            fileSystemItemDao.writeItem(item);
+        }
     }
 
     private static boolean threadsStillWork(List<Thread> threads) {
@@ -31,7 +36,6 @@ public class Main {
                 return true;
             }
         }
-
         return false;
     }
 

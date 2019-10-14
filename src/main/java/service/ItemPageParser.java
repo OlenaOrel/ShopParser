@@ -15,11 +15,11 @@ import java.util.List;
 public class ItemPageParser extends Thread {
 
     private final String URL;
-    private List<Item> itemList;
+    private List<String> jsonItemList;
 
-    public ItemPageParser(String URL, List<Item> itemList) {
+    public ItemPageParser(String URL, List<String> jsonItemList) {
         this.URL = URL;
-        this.itemList = itemList;
+        this.jsonItemList = jsonItemList;
     }
 
     @Override
@@ -32,8 +32,8 @@ public class ItemPageParser extends Thread {
             BigDecimal price = getItemPrice(document);
             String articleId = getItemArticleId(document);
             Item item = new Item(name, brand, color, price, articleId);
-            System.out.println(item.toString());
-            itemList.add(item);
+            String jsonItem = ItemService.getJsonFromItem(item);
+            jsonItemList.add(jsonItem);
         } catch (IOException e) {
             e.printStackTrace();
         }

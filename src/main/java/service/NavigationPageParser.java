@@ -1,6 +1,5 @@
 package service;
 
-import entity.Item;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,13 +11,13 @@ import java.util.List;
 public class NavigationPageParser extends Thread {
 
     private List<Thread> threads;
-    private List<Item> items;
+    private List<String> jsonItemList;
 
     private final String url;
 
-    public NavigationPageParser(List<Thread> threads, List<Item> items, String url) {
+    public NavigationPageParser(List<Thread> threads, List<String> jsonItemList, String url) {
         this.threads = threads;
-        this.items = items;
+        this.jsonItemList = jsonItemList;
         this.url = url;
     }
 
@@ -31,7 +30,7 @@ public class NavigationPageParser extends Thread {
                 String itemUrl = "https://www.aboutyou.de" + element.attr("href");
                 System.out.println(itemUrl);
                 if (itemUrl != null && !itemUrl.equals("")) {
-                    ItemPageParser itemPageParser = new ItemPageParser(itemUrl, items);
+                    ItemPageParser itemPageParser = new ItemPageParser(itemUrl, jsonItemList);
                     threads.add(itemPageParser);
                     itemPageParser.start();
                     sleep(1000);
