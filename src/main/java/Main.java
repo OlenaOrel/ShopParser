@@ -1,5 +1,6 @@
 import dao.FileSystemItemDao;
 import service.NavigationPageParser;
+import service.PaginationParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +9,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        String url = "https://www.aboutyou.de/maenner/bekleidung?page=2&sort=topseller";
+        String url = "https://www.aboutyou.de/maenner/bekleidung";
 
         List<String> jsonItemList = Collections.synchronizedList(new ArrayList<>());
         List<Thread> threads = Collections.synchronizedList(new ArrayList<>());
@@ -16,6 +17,9 @@ public class Main {
         NavigationPageParser parser = new NavigationPageParser(threads, jsonItemList, url);
         threads.add(parser);
         parser.start();
+
+        PaginationParser paginationParser = new PaginationParser(threads, jsonItemList, url);
+        threads.add(paginationParser);
         do {
             try {
                 Thread.sleep(3000);
@@ -28,6 +32,10 @@ public class Main {
         for (String item : jsonItemList) {
             fileSystemItemDao.writeItem(item);
         }
+
+        System.out.println("Amount of extracted products: " + jsonItemList.size());
+        System.out.println("Amount of triggered HTTP requests: " + jsonItemList.size());
+
     }
 
     private static boolean threadsStillWork(List<Thread> threads) {

@@ -28,7 +28,6 @@ public class NavigationPageParser extends Thread {
             Elements itemLinkElements = document.getElementsByAttributeValue("data-test-id", "ProductTile");
             for (Element element : itemLinkElements) {
                 String itemUrl = "https://www.aboutyou.de" + element.attr("href");
-                System.out.println(itemUrl);
                 if (itemUrl != null && !itemUrl.equals("")) {
                     ItemPageParser itemPageParser = new ItemPageParser(itemUrl, jsonItemList);
                     threads.add(itemPageParser);
@@ -36,9 +35,7 @@ public class NavigationPageParser extends Thread {
                     sleep(1000);
                 }
             }
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
             ex.printStackTrace();
         }
     }
